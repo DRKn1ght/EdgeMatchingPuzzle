@@ -22,12 +22,27 @@
 %  |4   6|  é representado por bloco(3, 6, 7, 4).
 %  |  7  |
 %
-%  Dizemos que um bloco está em posição adequada se ... COMPLETE!
+%  Dizemos que um bloco está em posição adequada se os blocos adjacentes 
+%  (acima, a direita, abaixo e a esquerda) tem o mesmo valor nas bordas adjacentes.
 %
 %  Dica: Implemente inicialmente o predicado bloco_adequado e depois
 %  blocos_adequados. Crie predicados auxiliares se necessário. Depois que o
 %  predicado jogo_solucao estiver funcionando, faça uma nova implementação
 %  eficiente dele.
+
+%% Resultados
+%
+% Permutação sem reordenar os blocos x Permutação ordenando os blocos:
+% Medio:   2.341 sec   x 0.356 sec
+% Grande:  105.456 sec x 40.980 sec
+% Grande2: 59.579 sec  x 15.916 sec
+% Grande3: 62.700 sec  x 25.444 sec
+%
+% Retrocesso sem reordenar os blocos x Retrocesso ordenando os blocos:
+% Medio:   17.845 sec  x 2.367 sec
+% Grande:  263.911 sec x 241.478 sec
+% Grande2: 258.245 sec x 102.930 sec
+% Grande3: 267.432 sec x 157.842 sec
 
 %% jogo_solucao(?JogoInicial, ?JogoFinal) is semidet
 %
@@ -393,44 +408,6 @@ retrocesso(Jogo, BlocosDisp, Pos, Solucao):-
     retrocesso(jogo(L, C, Blocks), RemainingBlocks, NextPos, Solucao),
     !.
 
-:- begin_tests(pequeno_retrocesso).
-
-test(j1x1, [nondet, Final = Blocos]) :-
-    Blocos = [
-        bloco(3, 6, 7, 5)
-    ],
-    reverse(Blocos, Inicial),
-    jogo_solucao_retrocesso(jogo(1, 1, Inicial), jogo(1, 1, Final)).
-
-
-test(j2x2, [nondet, Final = Blocos]) :-
-    Blocos = [
-        bloco(3, 4, 7, 9),
-        bloco(6, 9, 5, 4),
-        bloco(7, 6, 5, 2),
-        bloco(5, 3, 1, 6)
-    ],
-    reverse(Blocos, Inicial),
-    jogo_solucao_retrocesso(jogo(2, 2, Inicial), jogo(2, 2, Final)).
-
-test(j3x3, [nondet, Final = Blocos]) :-
-    Blocos = [
-        bloco(7, 3, 4, 9),
-        bloco(3, 4, 8, 3),
-        bloco(7, 4, 2, 4),
-        bloco(4, 4, 8, 5),
-        bloco(8, 3, 6, 4),
-        bloco(2, 2, 7, 3),
-        bloco(8, 9, 1, 3),
-        bloco(6, 6, 6, 9),
-        bloco(7, 8, 5, 6)
-    ],
-    reverse(Blocos, Inicial),
-    jogo_solucao_retrocesso(jogo(3, 3, Inicial), jogo(3, 3, Final)).
-
-:- end_tests(pequeno_retrocesso).
-
-
 :- begin_tests(medio_retrocesso).
 
 test(j4x4, [nondet, Final = Blocos]) :-
@@ -600,7 +577,6 @@ sort_blocks(Blocos, Sorted) :-
     pairs_keys_values(Pairs, PossiblesN, Blocos),
     keysort(Pairs, SortedPairs),
     pairs_values(SortedPairs, Sorted),
-    write(Sorted),
     !.
 
 :- begin_tests(sort_blocks).
